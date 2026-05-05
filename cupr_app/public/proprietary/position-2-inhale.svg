@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" fill="none">
+  <rect width="800" height="520" fill="#0a0a0a"/>
+  <rect x="48" y="48" width="704" height="424" rx="12" stroke="#2a2a2a" stroke-width="2"/>
+  <rect x="120" y="140" width="560" height="240" rx="8" stroke="#01696f" stroke-width="2" fill="#0d1514"/>
+  <path d="M220 260c80-40 160-40 240 0s160 40 240 0" stroke="#3d6b66" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M200 260h120l40-50 80 100 80-100 40 50h120" stroke="#5eead4" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+  <circle cx="400" cy="260" r="10" fill="#01696f"/>
+  <path d="M400 220v-28M430 248l24-14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+  <text x="400" y="108" text-anchor="middle" fill="#525252" font-family="ui-monospace,monospace" font-size="13" letter-spacing="0.35em">SECOND POSITION  INHALE PATH</text>
+</svg>

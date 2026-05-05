@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" fill="none">
+  <rect width="800" height="520" fill="#0a0a0a"/>
+  <rect x="48" y="48" width="704" height="424" rx="12" stroke="#2a2a2a" stroke-width="2"/>
+  <rect x="120" y="140" width="560" height="240" rx="8" stroke="#01696f" stroke-width="2" fill="#0d1514"/>
+  <path d="M400 200v80M360 240h80" stroke="#3d6b66" stroke-width="3" stroke-linecap="round"/>
+  <rect x="352" y="312" width="96" height="72" rx="6" fill="#111" stroke="#01696f" stroke-width="2"/>
+  <circle cx="400" cy="348" r="14" stroke="#5eead4" stroke-width="2" fill="none"/>
+  <path d="M394 348h12M400 342v12" stroke="#5eead4" stroke-width="2" stroke-linecap="round"/>
+  <text x="400" y="108" text-anchor="middle" fill="#525252" font-family="ui-monospace,monospace" font-size="13" letter-spacing="0.35em">FIRST POSITION  SEALED</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" fill="none">
+  <rect width="800" height="520" fill="#0a0a0a"/>
+  <rect x="48" y="48" width="704" height="424" rx="12" stroke="#2a2a2a" stroke-width="2"/>
+  <rect x="120" y="140" width="560" height="240" rx="8" stroke="#01696f" stroke-width="2" fill="#0d1514"/>
+  <path d="M400 180v160M280 220l240 120M520 220L280 340" stroke="#5eead4" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+  <circle cx="400" cy="260" r="72" stroke="#01696f" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+  <path d="M400 200v120M340 260h120" stroke="#5eead4" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <path d="M400 188l-16 28h32l-16-28z" fill="#5eead4" opacity="0.8"/>
+  <text x="400" y="108" text-anchor="middle" fill="#525252" font-family="ui-monospace,monospace" font-size="13" letter-spacing="0.35em">THIRD POSITION  CLEARING</text>
+</svg>

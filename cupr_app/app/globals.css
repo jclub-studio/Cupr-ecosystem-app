@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  --color-black: var(--theme-black);
+  --color-white: var(--theme-white);
+  --color-neutral-50: var(--theme-neutral-50);
+  --color-neutral-100: var(--theme-neutral-100);
+  --color-neutral-200: var(--theme-neutral-200);
+  --color-neutral-300: var(--theme-neutral-300);
+  --color-neutral-400: var(--theme-neutral-400);
+  --color-neutral-500: var(--theme-neutral-500);
+  --color-neutral-600: var(--theme-neutral-600);
+  --color-neutral-700: var(--theme-neutral-700);
+  --color-neutral-800: var(--theme-neutral-800);
+  --color-neutral-900: var(--theme-neutral-900);
+  --color-neutral-950: var(--theme-neutral-950);
+}
+
+@layer base {
+  /*
+   * Default palette matches the product UI (dark). :root must not use inverted
+   * black/white or SSR and pre-hydration paint render wrong grays and "bg-black"
+   * becomes white. Light theme overrides live under html.light / .light.
+   */
+  :root,
+  .dark {
+    --theme-black: #000000;
+    --theme-white: #ffffff;
+    --theme-neutral-50: #fafafa;
+    --theme-neutral-100: #f5f5f5;
+    --theme-neutral-200: #e5e5e5;
+    --theme-neutral-300: #d4d4d4;
+    --theme-neutral-400: #a3a3a3;
+    --theme-neutral-500: #737373;
+    --theme-neutral-600: #525252;
+    --theme-neutral-700: #404040;
+    --theme-neutral-800: #262626;
+    --theme-neutral-900: #171717;
+    --theme-neutral-950: #0a0a0a;
+  }
+
+  .light {
+    --theme-black: #ffffff;
+    --theme-white: #000000;
+    --theme-neutral-50: #0a0a0a;
+    --theme-neutral-100: #171717;
+    --theme-neutral-200: #262626;
+    --theme-neutral-300: #404040;
+    --theme-neutral-400: #525252;
+    --theme-neutral-500: #737373;
+    --theme-neutral-600: #a3a3a3;
+    --theme-neutral-700: #d4d4d4;
+    --theme-neutral-800: #e5e5e5;
+    --theme-neutral-900: #f5f5f5;
+    --theme-neutral-950: #fafafa;
+  }
+}
+
+@layer utilities {
+  @keyframes shine {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+  }
+}
+
+@layer components {
+  .sidebar-nav-tab {
+    @apply relative w-full text-left transition-all duration-300 rounded-md;
+    color: var(--theme-neutral-500);
+  }
+
+  .sidebar-nav-tab:hover {
+    background-color: color-mix(in srgb, var(--theme-white) 4%, transparent);
+    color: var(--theme-neutral-300);
+  }
+
+  .sidebar-nav-tab.active {
+    background-color: color-mix(in srgb, var(--theme-white) 8%, transparent);
+    color: var(--theme-white);
+  }
+
+  .sidebar-nav-tab.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    border-radius: 1px;
+    background-color: var(--theme-white);
+  }
+}
+
