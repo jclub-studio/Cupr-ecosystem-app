@@ -1,73 +1,20 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
+import type {
+  BudbookMockRaw,
+  BudbookMockPayloads,
+  Product,
+  InventoryItem,
+  Session,
+  Dispensary,
+  Accessory,
+  AccessoryCategory,
+  AccessoryCondition,
+} from '@/types/budbook';
 
-export type BudbookMockRaw = {
-  overview: unknown;
-  stash: {
-    products: Array<{
-      id: string;
-      strain_name: string;
-      brand: string;
-      classification: string;
-      category: string;
-      thc_percentage: number;
-      cbd_percentage: number;
-      top_terpenes: Array<{ name: string; percentage: number }>;
-      remaining_quantity: { value: number; unit: string };
-      lab_report_id: string;
-      preferred_dispensary_id: string;
-      purchase_date?: string;
-    }>;
-    hardware: Array<{
-      id: string;
-      model_name: string;
-      brand: string;
-      ecosystem: string;
-      usage_count: number;
-      condition: string;
-      next_scheduled_maintenance: string;
-    }>;
-    retail_directory: Array<{
-      id: string;
-      dispensary_name: string;
-      location: {
-        address_line: string;
-        city: string;
-        state: string;
-        zip: string;
-      };
-      preferred_budtender: { name: string; contact: string };
-      last_transaction_date: string;
-    }>;
-  };
-  recent_sessions: Array<{
-    id: string;
-    timestamp: string;
-    variables: {
-      product_id: string;
-      dosage: string;
-      consumption_method: string;
-      pairing: string | null;
-    };
-    efficacy_mapping: {
-      pre: { mood: number; pain: number; anxiety: number };
-      post: { mood: number; pain: number; anxiety: number };
-    };
-    pattern_recognition: string;
-  }>;
-};
+export type { BudbookMockRaw, BudbookMockPayloads };
 
-export type BudbookMockPayloads = {
-  overview: unknown;
-  user: Record<string, unknown>;
-  products: Record<string, unknown>[];
-  inventory: Record<string, unknown>[];
-  sessions: Record<string, unknown>[];
-  dispensaries: Record<string, unknown>[];
-  accessories: Record<string, unknown>[];
-};
-
-function classificationToType(c: string): string {
+function classificationToType(c: string): Product['type'] {
   const x = String(c || '').toLowerCase();
   if (x === 'indica' || x === 'sativa' || x === 'hybrid') return x;
   return 'hybrid';
@@ -75,7 +22,8 @@ function classificationToType(c: string): string {
 
 export function buildPayloadsFromRaw(raw: BudbookMockRaw): BudbookMockPayloads {
   const stash = raw.stash;
-  const products = stash.products.map((prod) => ({
+
+  const products: Product[] = stash.products.map((prod) => ({
     id: prod.id,
     name: prod.strain_name,
     strain_name: prod.strain_name,
@@ -92,7 +40,7 @@ export function buildPayloadsFromRaw(raw: BudbookMockRaw): BudbookMockPayloads {
     dispensary_id: prod.preferred_dispensary_id,
   }));
 
-  const inventory = stash.products.map((prod) => {
+  const inventory: InventoryItem[] = stash.products.map((prod) => {
     const qty = prod.remaining_quantity;
     const unit = qty.unit === 'g' ? 'grams' : qty.unit;
     return {
@@ -107,7 +55,7 @@ export function buildPayloadsFromRaw(raw: BudbookMockRaw): BudbookMockPayloads {
   });
 
   const ratings = [5, 4, 3, 4];
-  const sessions = raw.recent_sessions.map((s, idx) => {
+  const sessions: Session[] = raw.recent_sessions.map((s, idx) => {
     const pre = s.efficacy_mapping.pre;
     const post = s.efficacy_mapping.post;
     return {
@@ -135,7 +83,7 @@ export function buildPayloadsFromRaw(raw: BudbookMockRaw): BudbookMockPayloads {
     (a, b) => new Date(String(b.date)).getTime() - new Date(String(a.date)).getTime(),
   );
 
-  const dispensaries = stash.retail_directory.map((d) => ({
+  const dispensaries: Dispensary[] = stash.retail_directory.map((d) => ({
     id: d.id,
     name: d.dispensary_name,
     shop_name: d.dispensary_name,
@@ -147,8 +95,7 @@ export function buildPayloadsFromRaw(raw: BudbookMockRaw): BudbookMockPayloads {
     last_visit_date: d.last_transaction_date,
   }));
 
-  /** Maps stash hardware → Accessory entity fields the BudBook UI expects (category is required: Zb/kce call .split on it). */
-  function accessoryCategoryFromHardware(h: { model_name: string }): string {
+  function accessoryCategoryFromHardware(h: { model_name: string }): AccessoryCategory {
     const n = h.model_name.toLowerCase();
     if (n.includes('grinder') || n.includes('shredder')) return 'grinder';
     if (
@@ -162,15 +109,14 @@ export function buildPayloadsFromRaw(raw: BudbookMockRaw): BudbookMockPayloads {
     return 'other';
   }
 
-  function accessoryConditionSlug(raw: string): string {
+  function accessoryConditionSlug(raw: string): AccessoryCondition {
     const x = String(raw || '').toLowerCase();
-    if (x.includes('optimal') || x.includes('excellent') || x.includes('good'))
-      return 'good';
+    if (x.includes('optimal') || x.includes('excellent') || x.includes('good')) return 'good';
     if (x.includes('need') || x.includes('maint')) return 'needs_maintenance';
     return 'good';
   }
 
-  const accessories = stash.hardware.map((h) => ({
+  const accessories: Accessory[] = stash.hardware.map((h) => ({
     id: h.id,
     name: h.model_name,
     brand: h.brand,
@@ -186,17 +132,15 @@ export function buildPayloadsFromRaw(raw: BudbookMockRaw): BudbookMockPayloads {
     ecosystem_tag: h.ecosystem,
   }));
 
-  const user = {
-    id: 'user-mock-jordan-rivers',
-    email: 'jordan.rivers.mock@example.com',
-    full_name: 'Jordan Rivers',
-    username: 'jordanrivers',
-    role: 'user',
-  };
-
   return {
     overview: raw.overview,
-    user,
+    user: {
+      id: 'user-mock-jordan-rivers',
+      email: 'jordan.rivers.mock@example.com',
+      full_name: 'Jordan Rivers',
+      username: 'jordanrivers',
+      role: 'user',
+    },
     products,
     inventory,
     sessions,

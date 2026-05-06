@@ -17,14 +17,15 @@ import {
   Leaf,
   Package,
 } from 'lucide-react';
-import type { ComponentType } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import { IntegrationCardGrid, type IntegrationPlatform } from './IntegrationCardGrid';
 import {
   CHANNEL_INTEGRATIONS,
   CHANNEL_INTEGRATIONS_INTRO,
   type IntegrationPlatformContent,
 } from '@/content/integrations';
 
-const ICONS: Record<IntegrationPlatformContent['iconKey'], ComponentType<{ className?: string }>> = {
+const ICONS: Record<IntegrationPlatformContent['iconKey'], LucideIcon> = {
   Globe,
   MapPin,
   Smartphone,
@@ -39,9 +40,17 @@ const ICONS: Record<IntegrationPlatformContent['iconKey'], ComponentType<{ class
   Package,
 };
 
+const DIGITAL_PLATFORMS: IntegrationPlatform[] = CHANNEL_INTEGRATIONS.map(p => ({
+  icon: ICONS[p.iconKey],
+  name: p.name,
+  label: p.label,
+  desc: p.desc,
+}));
+
 export default function IntegrationContent() {
   return (
     <div className="flex flex-col w-full overflow-hidden relative">
+
       <section className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
 
@@ -64,28 +73,7 @@ export default function IntegrationContent() {
             {CHANNEL_INTEGRATIONS_INTRO.sectionLabel}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {CHANNEL_INTEGRATIONS.map((platform, i) => {
-              const Icon = ICONS[platform.iconKey];
-              return (
-                <motion.div
-                  key={platform.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                  className="p-8 bg-neutral-950 border border-white/10 rounded-2xl flex flex-col hover:bg-neutral-900 transition-colors group"
-                >
-                  <Icon className="w-8 h-8 text-neutral-500 mb-6 group-hover:text-white transition-colors" />
-                  <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-neutral-600 mb-2">
-                    {platform.label}
-                  </p>
-                  <h3 className="text-lg font-medium text-white mb-3">{platform.name}</h3>
-                  <p className="text-sm text-neutral-500 font-light leading-relaxed">{platform.desc}</p>
-                </motion.div>
-              );
-            })}
-          </div>
+          <IntegrationCardGrid platforms={DIGITAL_PLATFORMS} columns={4} />
 
           <div className="mt-16 pt-10 border-t border-white/10 max-w-3xl">
             <p className="text-neutral-400 font-light leading-relaxed text-lg">
@@ -106,7 +94,7 @@ export default function IntegrationContent() {
               <div className="p-4 border border-white/10 rounded-xl bg-black/50 backdrop-blur-md">
                 <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
                   <span className="text-xs font-mono text-neutral-500 uppercase">Analysis: Northern Lights</span>
-                  <ScanLine className="w-4 h-4 text-white" />
+                  <ScanLine className="w-4 h-4 text-white" aria-hidden="true" />
                 </div>
                 <div className="space-y-3">
                   {['Myrcene (1.2%)', 'Pinene (0.8%)', 'Caryophyllene (0.5%)'].map((terp, idx) => (
@@ -132,7 +120,7 @@ export default function IntegrationContent() {
 
           <div className="order-1 lg:order-2 space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-mono uppercase tracking-widest">
-              <Zap className="w-4 h-4 text-yellow-500" />
+              <Zap className="w-4 h-4 text-yellow-500" aria-hidden="true" />
               BudBook Pro
             </div>
             <h2 className="text-4xl md:text-5xl font-light tracking-tight">

@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'motion/react';
 import {
   ShoppingCart,
   BarChart2,
@@ -15,14 +14,15 @@ import {
   ShoppingBag,
   Truck,
 } from 'lucide-react';
-import type { ComponentType } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import { IntegrationCardGrid, type IntegrationPlatform } from './IntegrationCardGrid';
 import {
   OPERATIONAL_INTEGRATIONS,
   OPERATIONAL_INTEGRATIONS_INTRO,
   type IntegrationPlatformContent,
 } from '@/content/integrations';
 
-const ICONS: Record<IntegrationPlatformContent['iconKey'], ComponentType<{ className?: string }>> = {
+const ICONS: Record<IntegrationPlatformContent['iconKey'], LucideIcon> = {
   Globe,
   MapPin,
   Smartphone,
@@ -36,6 +36,13 @@ const ICONS: Record<IntegrationPlatformContent['iconKey'], ComponentType<{ class
   Leaf,
   Package,
 };
+
+const OPERATIONAL_PLATFORMS: IntegrationPlatform[] = OPERATIONAL_INTEGRATIONS.map(p => ({
+  icon: ICONS[p.iconKey],
+  name: p.name,
+  label: p.label,
+  desc: p.desc,
+}));
 
 export default function OperationalIntegrationContent() {
   return (
@@ -56,28 +63,11 @@ export default function OperationalIntegrationContent() {
             {OPERATIONAL_INTEGRATIONS_INTRO.sectionLabel}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {OPERATIONAL_INTEGRATIONS.map((platform, i) => {
-              const Icon = ICONS[platform.iconKey];
-              return (
-                <motion.div
-                  key={platform.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.07 }}
-                  className="p-8 bg-neutral-950 border border-white/10 rounded-2xl flex flex-col hover:bg-neutral-900 transition-colors group"
-                >
-                  <Icon className="w-8 h-8 text-neutral-500 mb-6 group-hover:text-white transition-colors" />
-                  <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-neutral-600 mb-2">
-                    {platform.label}
-                  </p>
-                  <h3 className="text-lg font-medium text-white mb-3">{platform.name}</h3>
-                  <p className="text-sm text-neutral-500 font-light leading-relaxed">{platform.desc}</p>
-                </motion.div>
-              );
-            })}
-          </div>
+          <IntegrationCardGrid
+            platforms={OPERATIONAL_PLATFORMS}
+            columns={2}
+            staggerDelay={0.07}
+          />
 
           <div className="mt-16 pt-10 border-t border-white/10 max-w-3xl">
             <p className="text-neutral-400 font-light leading-relaxed text-lg">
