@@ -130,7 +130,7 @@ function AppUiScreenshotModal({
                   key="ui-shot-lightbox"
                   role="dialog"
                   aria-modal="true"
-                  aria-label="Screenshot viewer"
+                  aria-label={alt}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}

@@ -20,10 +20,12 @@
   }
 
   function injectMain() {
+    if (document.querySelector('script[data-budbook-main]')) return;
     var s = document.createElement('script');
     s.type = 'module';
     s.crossOrigin = '';
     s.src = MAIN_SRC;
+    s.setAttribute('data-budbook-main', '1');
     document.head.appendChild(s);
   }
 
@@ -226,23 +228,28 @@
     };
   }
 
-  if (!isMockMode()) {
-    injectMain();
-    return;
-  }
+  try {
+    if (!isMockMode()) {
+      injectMain();
+      return;
+    }
 
-  fetch(PAYLOADS_SRC)
-    .then(function (r) {
-      return r.json();
-    })
-    .then(function (payloads) {
-      window.__BUDBOOK_MOCK_OVERVIEW__ = payloads.overview;
-      installFetchMock(payloads);
-      installXhrMock(payloads);
-      injectMain();
-    })
-    .catch(function (err) {
-      console.error('[BudBook mock] Failed to load mock payloads:', err);
-      injectMain();
-    });
+    fetch(PAYLOADS_SRC)
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (payloads) {
+        window.__BUDBOOK_MOCK_OVERVIEW__ = payloads.overview;
+        installFetchMock(payloads);
+        installXhrMock(payloads);
+        injectMain();
+      })
+      .catch(function (err) {
+        console.error('[BudBook mock] Failed to load mock payloads:', err);
+        injectMain();
+      });
+  } catch (e) {
+    console.error('[BudBook mock] Bootstrap execution failed:', e);
+    injectMain();
+  }
 })();
