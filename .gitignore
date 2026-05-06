@@ -1,0 +1,12 @@
+.DS_Store
+*.log
+
+# Nested external SPA scaffolds — track the source separately, not their git metadata.
+Freestyle App/**/.git/
+Freestyle App/**/node_modules/
+Freestyle App/**/.next/
+
+# macOS resource forks / Spotlight
+._*
+.Spotlight-V100
+.Trashes

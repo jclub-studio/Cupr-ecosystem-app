@@ -1,27 +1,33 @@
 import type {NextConfig} from 'next';
 
+/** Remote BudBeat shell; set in production. Local dev defaults to the usual Vite port when unset. */
+const budbeatOrigin =
+  process.env.BUDBEAT_APP_ORIGIN?.replace(/\/$/, '') ||
+  (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:3002' : '');
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Allow access to remote image placeholder.
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
-        pathname: '/**', // This allows any path under the hostname
+        pathname: '/**',
       },
     ],
+    // SVGs in `/public/proprietary/*.svg` are author-controlled illustrations that we serve
+    // through `next/image`; the strict CSP below blocks scripts inside the SVG.
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   transpilePackages: ['motion'],
   async rewrites() {
-    return [
+    const budbookStatic = [
       {
         source: '/budbook-app/:path*',
         destination: '/budbook-app/index.html',
@@ -30,19 +36,27 @@ const nextConfig: NextConfig = {
         source: '/budbook-app',
         destination: '/budbook-app/index.html',
       },
+    ] as const;
+
+    if (!budbeatOrigin) {
+      return [...budbookStatic];
+    }
+
+    return [
+      ...budbookStatic,
       {
         source: '/budbeat-app/:path*',
-        destination: 'http://localhost:3002/budbeat-app/:path*',
+        destination: `${budbeatOrigin}/budbeat-app/:path*`,
       },
       {
         source: '/budbeat-app',
-        destination: 'http://localhost:3002/budbeat-app',
+        destination: `${budbeatOrigin}/budbeat-app`,
       },
     ];
   },
   webpack: (config, {dev}) => {
     // HMR is disabled in AI Studio via DISABLE_HMR env var.
-    // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+    // File watching is disabled to prevent flickering during agent edits.
     if (dev && process.env.DISABLE_HMR === 'true') {
       config.watchOptions = {
         ignored: /.*/,

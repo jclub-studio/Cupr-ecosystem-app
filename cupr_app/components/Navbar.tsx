@@ -1,11 +1,24 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import { ThemeToggle } from './ThemeToggle';
+
+/** Source dimensions of the navbar logo PNGs in /public — used by next/image for layout. */
+const NAV_LOGO_DIMS: Record<string, { width: number; height: number }> = {
+  '/Cuproslogo.png': { width: 2000, height: 2000 },
+  '/cuprbrandlogo.png': { width: 2730, height: 1536 },
+  '/budbooklogo.png': { width: 2730, height: 1536 },
+  '/BudBeatlogo.png': { width: 2730, height: 1536 },
+};
+
+function getLogoDims(src: string): { width: number; height: number } {
+  return NAV_LOGO_DIMS[src] ?? { width: 256, height: 64 };
+}
 
 type NavLogoStyle = 'original' | 'mono' | 'auto';
 
@@ -37,6 +50,27 @@ type NavFlatItem = {
 
 type NavLinkItem = NavFlatItem | NavDropdownItem;
 
+/** Match internal links where pathname excludes query (e.g. /budbook vs ?tab=). */
+function routeMatches(pathname: string, href: string, tabInUrl: string | null): boolean {
+  if (href.startsWith('http://') || href.startsWith('https://')) {
+    return false;
+  }
+  const [path, queryString] = href.split('?');
+  if (pathname !== path) {
+    return false;
+  }
+  if (!queryString) {
+    return true;
+  }
+  const want = new URLSearchParams(queryString);
+  if (!want.has('tab')) {
+    return true;
+  }
+  const wantTab = want.get('tab');
+  const curTab = tabInUrl ?? 'intro';
+  return wantTab === curTab;
+}
+
 function NavLabel({
   label,
   variant,
@@ -58,15 +92,17 @@ function NavLabel({
         } as const)
       : undefined;
 
+  const dims = getLogoDims(label.labelLogoSrc);
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={label.labelLogoSrc}
       alt={label.labelText}
+      width={dims.width}
+      height={dims.height}
       style={filterStyle}
       className={`${sizeClass} w-auto object-contain opacity-70 transition-opacity group-hover:opacity-100`}
-      loading="eager"
-      decoding="async"
+      sizes="(max-width: 768px) 192px, 256px"
+      priority
     />
   );
 }
@@ -121,7 +157,7 @@ const NAV_LINKS: NavLinkItem[] = [
       { href: '/budbook?tab=journal', label: 'Journal' },
       { href: '/budbook?tab=social', label: 'Social' },
       { href: '/budbook?tab=shop', label: 'Shop' },
-      { href: '/budbook?tab=edu', label: 'Edu' },
+      { href: '/budbook?tab=pro', label: 'Pro' },
       { href: '/budbook-app', label: 'BUDBOOK APP' },
     ],
   },
@@ -134,13 +170,7 @@ const NAV_LINKS: NavLinkItem[] = [
       logoSizeClassName: 'max-h-11 md:max-h-12 w-auto -ml-2 md:-ml-3',
     },
     dropdown: true,
-    links: [
-      { href: '/budbook?tab=integration', label: 'Integration' },
-      { href: '/budbook?tab=video-chat', label: 'Video Chat' },
-      { href: '/budbook?tab=media', label: 'Media' },
-      { href: '/budbook?tab=games', label: 'Games' },
-      { href: '/budbeat-app', label: 'BudBeat App' },
-    ],
+    links: [{ href: '/budbeat-app', label: 'BudBeat App' }],
   },
 ];
 
@@ -157,6 +187,8 @@ export function Navbar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabInUrl = searchParams.get('tab');
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
@@ -170,19 +202,20 @@ export function Navbar() {
         >
           Vantage
           {pathname === '/' && (
-            <motion.div layoutId="nav-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
+            <motion.div layoutId="nav-indicator-vantage" className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
           )}
         </Link>
 
         {/* Tablet/Mobile: show main header logo */}
         <Link href="/" className="relative z-10 flex items-center md:hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src="/cuprbrandlogo.png"
             alt="CŪPR"
+            width={2730}
+            height={1536}
             className="h-16 w-auto object-contain"
-            loading="eager"
-            decoding="async"
+            sizes="128px"
+            priority
           />
         </Link>
 
@@ -191,7 +224,9 @@ export function Navbar() {
           {NAV_LINKS.map((link) => {
             if (link.id === 'vantage') return null;
             if ('dropdown' in link && link.dropdown) {
-              const isActive = link.links.some((sub) => pathname === sub.href);
+              const isActive = link.links.some((sub) =>
+                routeMatches(pathname, sub.href, pathname === '/budbook' ? tabInUrl : null),
+              );
               return (
                 <div 
                   key={link.id} 
@@ -209,7 +244,7 @@ export function Navbar() {
                      <ChevronDown className={`w-3 h-3 transition-transform ${hoveredDropdown === link.id ? 'rotate-180' : ''}`} />
                      {isActive && (
                         <motion.div
-                          layoutId="nav-indicator"
+                          layoutId={`nav-indicator-dropdown-${link.id}`}
                           className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"
                         />
                       )}
@@ -226,7 +261,7 @@ export function Navbar() {
                        >
                           <ul className="space-y-4 relative z-10">
                              {link.links.map((sublink) => (
-                                <li key={sublink.href}>
+                                <li key={`${link.id}-${sublink.label}`}>
                                    {sublink.external ? (
                                      <a
                                        href={sublink.href}
@@ -283,7 +318,7 @@ export function Navbar() {
                 <NavLabel label={flat.label} variant="desktop" />
                 {pathname === flat.href && (
                   <motion.div
-                    layoutId="nav-indicator"
+                    layoutId={`nav-indicator-flat-${flat.id}`}
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-white"
                   />
                 )}
@@ -342,7 +377,7 @@ export function Navbar() {
                             <div className="pl-6 border-l border-white/10 space-y-8 py-4">
                               <ul className="space-y-4">
                                 {link.links.map((sublink) => (
-                                  <li key={sublink.href}>
+                                  <li key={`${link.id}-${sublink.label}`}>
                                     {sublink.external ? (
                                       <a
                                         href={sublink.href}

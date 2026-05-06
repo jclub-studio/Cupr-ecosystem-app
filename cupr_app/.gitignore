@@ -5,3 +5,7 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# TypeScript incremental build info — generated, should not be committed.
+tsconfig.tsbuildinfo
+*.tsbuildinfo

@@ -19,7 +19,7 @@ export default function SocialContent() {
             Social Content Management
           </h2>
           <p className="mt-8 text-neutral-400 font-light leading-relaxed text-lg">
-            Cannabis-compliant website infrastructure with regulatory guardrails built into the publishing workflow.
+            Compliance-first social publishing for cannabis operators — pre-approved templates, jurisdictional age-gating, and FDA-aware language checks built directly into the workflow.
           </p>
         </div>
       </section>

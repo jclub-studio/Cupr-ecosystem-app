@@ -26,13 +26,19 @@ export default function PDFViewer({ fileUrl, title = 'Document' }: PDFViewerProp
     setIsLoading(false);
   }, []);
 
-  const onLoadError = useCallback((err: Error) => {
+  const onLoadError = useCallback((err: unknown) => {
     const base = 'Failed to load PDF. Please try again.';
-    setError(
-      process.env.NODE_ENV === 'development' ? `${base} (${err.message})` : base,
-    );
+    const detail =
+      err instanceof Error
+        ? err.message
+        : err !== null && typeof err === 'object' && 'message' in err && typeof (err as { message: unknown }).message === 'string'
+          ? (err as { message: string }).message
+          : String(err);
+    setError(process.env.NODE_ENV === 'development' ? `${base} (${detail})` : base);
     setIsLoading(false);
-    console.error(err);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(err);
+    }
   }, []);
 
   return (

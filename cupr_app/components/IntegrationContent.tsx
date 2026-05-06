@@ -1,39 +1,75 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Globe, MapPin, Search, Store, ShoppingBag, Truck, Zap, Activity, ScanLine, Smartphone } from 'lucide-react';
+import {
+  Globe,
+  MapPin,
+  Search,
+  Store,
+  ShoppingBag,
+  Truck,
+  Zap,
+  Activity,
+  ScanLine,
+  Smartphone,
+  ShoppingCart,
+  BarChart2,
+  Leaf,
+  Package,
+} from 'lucide-react';
+import type { ComponentType } from 'react';
+import {
+  CHANNEL_INTEGRATIONS,
+  CHANNEL_INTEGRATIONS_INTRO,
+  type IntegrationPlatformContent,
+} from '@/content/integrations';
 
-const DIGITAL_PLATFORMS = [
-  { icon: Globe, name: 'BudBook Profiles', desc: 'Claim and optimize your verified hub within the CŪPR ecosystem.' },
-  { icon: MapPin, name: 'Google Business', desc: 'Synchronized hours, menus, and reviews for local SEO dominance.' },
-  { icon: Smartphone, name: 'Apple Business Connect', desc: 'Manage your location presence across Apple Maps, Siri, and Wallet.' },
-  { icon: Search, name: 'Snapchat & Yelp Optimization', desc: 'Reputation management, Snap Map visibility, and uniform data presentation.' },
-  { icon: Activity, name: 'Weedmaps & Leafly', desc: 'Real-time menu syncing and platform-specific profile enhancement.' },
-  { icon: Store, name: 'Dutchie Systems', desc: 'Seamless integration with your existing POS and online ordering.' },
-  { icon: ShoppingBag, name: 'E-Commerce & Pickup', desc: 'Frictionless click-and-collect workflows for in-store pickup.' },
-  { icon: Truck, name: 'Delivery Outfitting', desc: 'Logistics integration, fleet management routing, and digital outfitting.' }
-];
+const ICONS: Record<IntegrationPlatformContent['iconKey'], ComponentType<{ className?: string }>> = {
+  Globe,
+  MapPin,
+  Smartphone,
+  Search,
+  Activity,
+  Store,
+  ShoppingBag,
+  Truck,
+  ShoppingCart,
+  BarChart2,
+  Leaf,
+  Package,
+};
 
 export default function IntegrationContent() {
   return (
     <div className="flex flex-col w-full overflow-hidden relative">
-      
-      {/* Digital Presence Grid */}
       <section className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-20 space-y-4">
-            <h2 className="text-3xl font-light tracking-tight">The Unified Digital Presence</h2>
-            <p className="text-neutral-400 font-light max-w-2xl">
-              Inconsistent hours, menus, and branding cost you customers. We standardize and maintain your digital footprint across every critical touchpoint, ensuring perfect data parity.
+
+          <div className="mb-16 space-y-6 max-w-3xl">
+            <p className="text-xl md:text-2xl font-light text-white leading-relaxed">
+              {CHANNEL_INTEGRATIONS_INTRO.subhead}
+            </p>
+            <p className="text-neutral-400 font-light leading-relaxed text-lg">
+              {CHANNEL_INTEGRATIONS_INTRO.body}
             </p>
           </div>
 
+          <div className="mb-16 p-6 border border-white/10 rounded-2xl bg-neutral-950/50">
+            <p className="text-neutral-300 font-light leading-relaxed">
+              {CHANNEL_INTEGRATIONS_INTRO.bridge}
+            </p>
+          </div>
+
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-neutral-500 mb-10">
+            {CHANNEL_INTEGRATIONS_INTRO.sectionLabel}
+          </p>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {DIGITAL_PLATFORMS.map((platform, i) => {
-              const Icon = platform.icon;
+            {CHANNEL_INTEGRATIONS.map((platform, i) => {
+              const Icon = ICONS[platform.iconKey];
               return (
-                <motion.div 
-                  key={platform.name}
+                <motion.div
+                  key={platform.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -41,25 +77,31 @@ export default function IntegrationContent() {
                   className="p-8 bg-neutral-950 border border-white/10 rounded-2xl flex flex-col hover:bg-neutral-900 transition-colors group"
                 >
                   <Icon className="w-8 h-8 text-neutral-500 mb-6 group-hover:text-white transition-colors" />
+                  <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-neutral-600 mb-2">
+                    {platform.label}
+                  </p>
                   <h3 className="text-lg font-medium text-white mb-3">{platform.name}</h3>
                   <p className="text-sm text-neutral-500 font-light leading-relaxed">{platform.desc}</p>
                 </motion.div>
               );
             })}
           </div>
+
+          <div className="mt-16 pt-10 border-t border-white/10 max-w-3xl">
+            <p className="text-neutral-400 font-light leading-relaxed text-lg">
+              {CHANNEL_INTEGRATIONS_INTRO.closing}
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* BudBook Pro Partners Integration */}
       <section className="py-16 px-6 relative overflow-hidden">
-        {/* Background Graphic */}
         <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[800px] h-[800px] bg-neutral-900/50 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           <div className="order-2 lg:order-1 relative aspect-square md:aspect-[4/3] rounded-2xl border border-white/10 overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-8">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:2rem_2rem]" />
-            
-            {/* Mock Data Display UI */}
+
             <div className="w-full max-w-sm space-y-4 relative z-10">
               <div className="p-4 border border-white/10 rounded-xl bg-black/50 backdrop-blur-md">
                 <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
@@ -74,11 +116,11 @@ export default function IntegrationContent() {
                         <span>{terp.split(' ')[1]}</span>
                       </div>
                       <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                        <motion.div 
+                        <motion.div
                           initial={{ width: 0 }}
                           whileInView={{ width: `${100 - (idx * 25)}%` }}
                           transition={{ duration: 1, delay: 0.5 + (idx * 0.2) }}
-                          className="h-full bg-white" 
+                          className="h-full bg-white"
                         />
                       </div>
                     </div>

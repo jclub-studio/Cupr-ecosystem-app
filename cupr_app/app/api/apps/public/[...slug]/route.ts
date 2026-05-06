@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { mockApiDisabledResponse } from '@/lib/budbook-mock/guard';
 
 /**
  * BudBook / Base44 bootstrap calls:
@@ -10,6 +11,9 @@ export async function GET(
   _request: Request,
   context: { params: Promise<{ slug?: string[] }> },
 ) {
+  const blocked = mockApiDisabledResponse();
+  if (blocked) return blocked;
+
   const { slug } = await context.params;
   const path = (slug ?? []).join('/');
   if (path.includes('public-settings')) {

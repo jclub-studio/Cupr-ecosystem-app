@@ -6,15 +6,29 @@ import { motion, AnimatePresence } from 'motion/react';
 import Image, { type StaticImageData } from 'next/image';
 import { Maximize2, X } from 'lucide-react';
 
-/** Swap these files in `public/vantage/` with your in-app screenshots (same names, or change paths here). */
-export const VANTAGE_CUPRO_UI_SRC = '/CUPROSUI.png';
-/** BudBook session UI — file in `public/budbook-session-user-interface.png`. */
-export const VANTAGE_BUDBOOK_UI_SRC = '/budbook-session-user-interface.png';
+/** CŪPROs dashboard screenshot in `/public`. */
+export const CUPROS_SHOWCASE_DASHBOARD_SRC = '/CUPROSUI.png';
+/** BudBook session UI — `/public/budbook-session-user-interface.png`. */
+export const CUPROS_SHOWCASE_BUDBOOK_UI_SRC = '/budbook-session-user-interface.png';
 
 const APACHE_LOCKBOX_MOCKUP_GIF = '/videos/Lockbox-Mockup.gif';
 const CUPROS_LOGO_SRC = '/Cuproslogo.png';
 const LOCKBOX_APACHE110_LOGO_SRC = '/videos/Lockbox%20(2).png';
 const BUDBOOK_LOGO_SRC = '/budbooklogo.png';
+
+/** Source pixel dimensions of `/public` PNGs used in this showcase — required by next/image. */
+const SHOWCASE_DIMS: Record<string, { width: number; height: number }> = {
+  [CUPROS_SHOWCASE_DASHBOARD_SRC]: { width: 2114, height: 1236 },
+  [CUPROS_SHOWCASE_BUDBOOK_UI_SRC]: { width: 1115, height: 989 },
+  [CUPROS_LOGO_SRC]: { width: 2000, height: 2000 },
+  [LOCKBOX_APACHE110_LOGO_SRC]: { width: 2730, height: 1536 },
+  [BUDBOOK_LOGO_SRC]: { width: 2730, height: 1536 },
+  [APACHE_LOCKBOX_MOCKUP_GIF]: { width: 1639, height: 921 },
+};
+
+function dimsFor(src: string): { width: number; height: number } {
+  return SHOWCASE_DIMS[src] ?? { width: 1600, height: 900 };
+}
 
 function CuprosWordmark({ className }: { className?: string }) {
   return (
@@ -49,9 +63,17 @@ function ScreenshotImage({
       />
     );
   }
+  const dims = dimsFor(src);
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- string URLs are served from /public
-    <img src={src} alt={alt} className={className} loading="eager" decoding="async" />
+    <Image
+      src={src}
+      alt={alt}
+      width={dims.width}
+      height={dims.height}
+      className={className}
+      sizes={sizes}
+      priority={priority}
+    />
   );
 }
 
@@ -97,6 +119,8 @@ function AppUiScreenshotModal({
         <div
           role="button"
           tabIndex={0}
+          aria-label={`Expand screenshot: ${alt}`}
+          aria-haspopup="dialog"
           onClick={() => setOpen(true)}
           onKeyDown={e => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -198,7 +222,8 @@ function ShowcaseProductModal({
   );
 }
 
-export function VantageIntroShowcase() {
+/** Full CŪPROs / ecosystem feature showcase for the CMS (CŪPROs) intro surface — not the BudBook or Vantage intros. */
+export function CuprosIntroShowcase() {
   return (
     <section className="w-full pb-12 pt-12 md:pt-20">
       <motion.div
@@ -223,14 +248,14 @@ export function VantageIntroShowcase() {
           {/* 1 — CŪPROs */}
           <ShowcaseProductModal delay={0.05}>
             <h2 className="flex flex-col gap-3 border-0 p-0">
-              {/* Logo asset includes wordmark + tagline; explicit subtitle for section context */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={CUPROS_LOGO_SRC}
                 alt="cūPROS — Customer Understanding. Process Optimization. Solutions."
+                width={dimsFor(CUPROS_LOGO_SRC).width}
+                height={dimsFor(CUPROS_LOGO_SRC).height}
                 className="h-auto w-full max-w-md object-contain object-left md:max-w-lg"
-                loading="eager"
-                decoding="async"
+                sizes="(max-width: 768px) 100vw, 32rem"
+                priority
               />
               <span className="text-xs font-mono uppercase tracking-[0.22em] text-neutral-500">
                 Compliance-native SaaS
@@ -259,7 +284,7 @@ export function VantageIntroShowcase() {
               </p>
             </div>
             <AppUiScreenshotModal
-              imageSrc={VANTAGE_CUPRO_UI_SRC}
+              imageSrc={CUPROS_SHOWCASE_DASHBOARD_SRC}
               alt="CŪPROs dashboard — Network Overview with omnichannel KPIs, compliance preflight, location status, and AI-driven growth actions"
               hint="In-app UI"
             />
@@ -269,19 +294,19 @@ export function VantageIntroShowcase() {
           <ShowcaseProductModal delay={0.1}>
             <div className="flex flex-col gap-6">
               <h2 className="flex flex-col items-end gap-3 border-0 p-0 text-right">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={LOCKBOX_APACHE110_LOGO_SRC}
                   alt="Lockbox: Apache 110"
+                  width={dimsFor(LOCKBOX_APACHE110_LOGO_SRC).width}
+                  height={dimsFor(LOCKBOX_APACHE110_LOGO_SRC).height}
                   className="-mr-6 h-auto w-full max-w-2xl object-contain object-right md:-mr-8 md:max-w-3xl"
-                  loading="eager"
-                  decoding="async"
+                  sizes="(max-width: 768px) 100vw, 48rem"
+                  priority
                 />
               </h2>
 
               <div className="max-w-4xl overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_2px_28px_rgba(0,0,0,0.55)]">
-                {/* Animated GIF — next/image not suitable */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {/* eslint-disable-next-line @next/next/no-img-element -- animated GIF; next/image cannot optimize this format */}
                 <img
                   src={APACHE_LOCKBOX_MOCKUP_GIF}
                   alt="Apache 110 Lockbox — 360° product mockup rotating on black"
@@ -301,13 +326,14 @@ export function VantageIntroShowcase() {
           {/* 3 — BudBook */}
           <ShowcaseProductModal delay={0.15}>
             <h2 className="flex flex-col gap-3 border-0 p-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={BUDBOOK_LOGO_SRC}
                 alt="BudBook"
+                width={dimsFor(BUDBOOK_LOGO_SRC).width}
+                height={dimsFor(BUDBOOK_LOGO_SRC).height}
                 className="h-auto w-full max-w-md object-contain object-left md:max-w-lg"
-                loading="eager"
-                decoding="async"
+                sizes="(max-width: 768px) 100vw, 32rem"
+                priority
               />
               <span className="text-xs font-mono uppercase tracking-[0.22em] text-neutral-500">
                 Training &amp; enablement
@@ -319,7 +345,7 @@ export function VantageIntroShowcase() {
               keeping staff sharp without pulling them off the sales floor for generic LMS friction.
             </p>
             <AppUiScreenshotModal
-              imageSrc={VANTAGE_BUDBOOK_UI_SRC}
+              imageSrc={CUPROS_SHOWCASE_BUDBOOK_UI_SRC}
               alt="BudBook in-app interface screenshot"
               hint="In-app UI"
             />

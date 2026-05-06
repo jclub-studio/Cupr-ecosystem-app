@@ -8,7 +8,7 @@ export default function ComplianceContent() {
     '50-state advertising law monitoring with real-time policy updates',
     'Creative pre-flight review flagging compliance violations before campaign launch',
     'Audit trail maintenance for DEA registration and regulatory scrutiny',
-    '280E deduction tracking generating reports for tax filing/amended returns'
+    'Section 280E expense tracking and amended-return reports for adult-use operators and prior-period medical filings predating Schedule III rescheduling'
   ];
 
   return (
