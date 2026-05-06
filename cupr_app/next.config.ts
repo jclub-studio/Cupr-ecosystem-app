@@ -12,8 +12,12 @@ if (process.env.NODE_ENV === 'production' && !process.env.BUDBEAT_APP_ORIGIN) {
   );
 }
 
+/** Hostnames allowed for Next.js dev (HMR/RSC) when using Cloudflare quick tunnels or a named tunnel. */
+const tunnelDevHostname = process.env.CUPR_TUNNEL_DEV_HOSTNAME?.replace(/^https?:\/\//, '').split('/')[0];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  allowedDevOrigins: ['*.trycloudflare.com', ...(tunnelDevHostname ? [tunnelDevHostname] : [])],
   typescript: {
     ignoreBuildErrors: false,
   },

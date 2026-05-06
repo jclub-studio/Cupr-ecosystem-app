@@ -30,6 +30,17 @@ CŪPR is a unified hardware + B2B SaaS + consumer app ecosystem for cannabis ret
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
+## Cloudflare Tunnel (public URL for local dev)
+
+Expose **cupr_app** on port **3000** with a single tunnel: `/budbook-app` is static from this repo, and `/budbeat-app` is reverse-proxied to BudBeat on **3002** (see `next.config.ts`).
+
+1. Install: `brew install cloudflared`
+2. Run BudBeat: `cd "../Freestyle App/budbeat" && npm run dev`
+3. Run cupr_app: `cd cupr_app && npm run dev`
+4. Quick tunnel (ephemeral URL each run): `cloudflared tunnel --url http://127.0.0.1:3000`
+5. Set `APP_URL` in `.env` to the printed `https://*.trycloudflare.com` URL for correct self-links.
+6. For a stable hostname, use a [named tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/) and set `CUPR_TUNNEL_DEV_HOSTNAME` in `.env` to that hostname (in addition to `*.trycloudflare.com` in `allowedDevOrigins`).
+
 ## Scripts
 
 - `npm run dev` - Start development server
