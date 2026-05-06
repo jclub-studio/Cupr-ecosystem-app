@@ -67,7 +67,7 @@ function routeMatches(pathname: string, href: string, tabInUrl: string | null): 
     return true;
   }
   const wantTab = want.get('tab');
-  const curTab = tabInUrl ?? 'intro';
+  const curTab = tabInUrl ?? (path === '/budbeat' ? 'video' : 'intro');
   return wantTab === curTab;
 }
 
@@ -164,13 +164,19 @@ const NAV_LINKS: NavLinkItem[] = [
   {
     id: 'origin',
     label: {
-      labelText: 'ORIGIN',
+      labelText: 'BUDBEAT',
       labelLogoSrc: '/BudBeatlogo.png',
       logoStyle: 'auto',
       logoSizeClassName: 'max-h-11 md:max-h-12 w-auto -ml-2 md:-ml-3',
     },
     dropdown: true,
-    links: [{ href: '/budbeat-app', label: 'BudBeat App' }],
+    links: [
+      { href: '/budbeat?tab=video', label: 'Video Sessions' },
+      { href: '/budbeat?tab=media', label: 'Media' },
+      { href: '/budbeat?tab=games', label: 'Games' },
+      { href: '/budbeat?tab=integration', label: 'Ecosystem' },
+      { href: '/budbeat-app', label: 'BudBeat App' },
+    ],
   },
 ];
 
@@ -225,7 +231,11 @@ export function Navbar() {
             if (link.id === 'vantage') return null;
             if ('dropdown' in link && link.dropdown) {
               const isActive = link.links.some((sub) =>
-                routeMatches(pathname, sub.href, pathname === '/budbook' ? tabInUrl : null),
+                routeMatches(
+                  pathname,
+                  sub.href,
+                  pathname === '/budbook' || pathname === '/budbeat' ? tabInUrl : null,
+                ),
               );
               return (
                 <div 
