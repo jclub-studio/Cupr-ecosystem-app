@@ -5,6 +5,13 @@ const budbeatOrigin =
   process.env.BUDBEAT_APP_ORIGIN?.replace(/\/$/, '') ||
   (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:3002' : '');
 
+if (process.env.NODE_ENV === 'production' && !process.env.BUDBEAT_APP_ORIGIN) {
+  console.warn(
+    '[cupr_app] WARNING: BUDBEAT_APP_ORIGIN is not set in production. ' +
+    'Routes under /budbeat-app/* will return 404. Set this variable to the BudBeat app origin.',
+  );
+}
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   typescript: {
